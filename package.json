@@ -1,0 +1,17 @@
+{
+    "name": "HappyLifeServer",
+    "version": "1.0.0",
+    "description": "Simple is the best.",
+    "main": "index.js",
+    "author": "xf",
+    "license": "MIT",
+    "dependencies": {
+        "body-parser": "^1.20.3",
+        "cookie-parser": "^1.4.7",
+        "express": "^4.21.1",
+        "morgan": "^1.10.0"
+    },
+    "scripts": {
+        "start": "node ./bin/happyLifeServer"
+    }
+}
