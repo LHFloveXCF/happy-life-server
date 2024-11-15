@@ -1,5 +1,6 @@
 
-let path = require('path')
+let path = require('path'),
+    merge = require('merger');
 
 const cookiesOfThirtySixPath = path.resolve(__dirname, '..') + '/config/cookiesOfThirtySix.txt';
 

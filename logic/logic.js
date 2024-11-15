@@ -1,5 +1,7 @@
 "use strict";
 
+let mysqlC = require('../logic/logicMySQL')
+
 /**
  * GM用户行为日志插入
  * @param {Object} reqBody
@@ -37,4 +39,9 @@ function logInsert(reqBody, ip, callBack) {
     });
 }
 
+function test(reqBody, callBack) {
+    callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.MULTILINGUAL_INSERT));
+}
+
+exports.test = test;
 exports.logInsert = logInsert;
