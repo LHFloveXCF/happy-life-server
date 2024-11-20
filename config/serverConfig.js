@@ -1,4 +1,4 @@
-exports.PORT = 18140;																		//服务对外端口
+exports.PORT = 18141;																		//服务对外端口
 
 exports.REDIS_CONF = {																		//Redis 的配置
     PORT: 6379,

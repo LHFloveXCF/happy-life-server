@@ -76,7 +76,7 @@ router.post('/:action', function (req, res, next) {
                 }
             });
             break;
-            
+
         case /^saveMsg$/.test(action):
             params = {
                 "content": ""
@@ -123,10 +123,10 @@ router.get('/:action', (req, res, next) => {
         retf(iRet(CODE.ERROR_API, MESSAGE.ERROR.ERROR_API));
         return;
     }
-    
+
     switch (true) {
-        case /^test$/.test(action):
-            logic.test(reqBody, function (err, res) {
+        case /^getMsg$/.test(action):
+            logic.getMsg(reqBody, function (err, res) {
                 if (err == null) {
                     retf(res);
                 } else {

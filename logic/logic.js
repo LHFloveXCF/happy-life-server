@@ -48,30 +48,31 @@ function test(reqBody, callBack) {
 }
 
 function saveMsg(reqBody, ip, callBack) {
+    console.log("ip: ", ip);
+    
     let params = ['1', reqBody.content]
     let sql = "INSERT INTO `user_msg` (`use_id`, `msg`, `time`) VALUES (?, ?, NOW());";
     mysqlC.executeQuery(sql, params, (error, results) => {
         if (error) {
-            callBack(iRET(CODE.ERROR_INTERNAL, err.stack), null);
+            callBack(iRET(CODE.ERROR_INTERNAL, error.stack), null);
         } else {
             callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.MULTILINGUAL_INSERT));
         }
     });
 }
 
-function getMsg(reqBody, ip, callBack) {
-    let params = ['1', reqBody.content]
-    let sql = "INSERT INTO `user_msg` (`use_id`, `msg`, `time`) VALUES (?, ?, NOW());";
+function getMsg(reqBody, callBack) {
+    let sql = "SELECT * FROM user_msg;";
+    let params = []
     mysqlC.executeQuery(sql, params, (error, results) => {
         if (error) {
-            callBack(iRET(CODE.ERROR_INTERNAL, err.stack), null);
-        } else {
-            callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.MULTILINGUAL_INSERT));
+            callBack(iRET(CODE.ERROR_INTERNAL, error.stack), null);
+        } else {            
+            callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.MULTILINGUAL_INSERT, results));
         }
     });
 }
 
 exports.getMsg = getMsg;
 exports.saveMsg = saveMsg;
-exports.test = test;
 exports.logInsert = logInsert;
