@@ -1,6 +1,10 @@
 "use strict";
 
-let mysqlC = require('../logic/logicMySQL')
+let mysqlC = require('../logic/logicMySQL'),
+    common = require('./logicCommon'),
+    CODE = require('./returnObj').CODE,
+    MESSAGE = require('./returnObj').MESSAGE,
+    iRET = common.iRET;
 
 /**
  * GM用户行为日志插入
@@ -43,5 +47,31 @@ function test(reqBody, callBack) {
     callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.MULTILINGUAL_INSERT));
 }
 
+function saveMsg(reqBody, ip, callBack) {
+    let params = ['1', reqBody.content]
+    let sql = "INSERT INTO `user_msg` (`use_id`, `msg`, `time`) VALUES (?, ?, NOW());";
+    mysqlC.executeQuery(sql, params, (error, results) => {
+        if (error) {
+            callBack(iRET(CODE.ERROR_INTERNAL, err.stack), null);
+        } else {
+            callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.MULTILINGUAL_INSERT));
+        }
+    });
+}
+
+function getMsg(reqBody, ip, callBack) {
+    let params = ['1', reqBody.content]
+    let sql = "INSERT INTO `user_msg` (`use_id`, `msg`, `time`) VALUES (?, ?, NOW());";
+    mysqlC.executeQuery(sql, params, (error, results) => {
+        if (error) {
+            callBack(iRET(CODE.ERROR_INTERNAL, err.stack), null);
+        } else {
+            callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.MULTILINGUAL_INSERT));
+        }
+    });
+}
+
+exports.getMsg = getMsg;
+exports.saveMsg = saveMsg;
 exports.test = test;
 exports.logInsert = logInsert;

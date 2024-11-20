@@ -30,12 +30,7 @@ router.post('/:action', function (req, res, next) {
         reqHeaders = req.headers,
         contentType,
         ip = common.getClientIp(req),
-        params,
-        baseParams = {
-            gameID: '',
-            data: '',
-            sign: ''
-        };
+        params;
     console.log(`\n接口名称[c]：${action}\n请求方式：POST\n请求体:  ${common.safeJSONStingify(reqBody)}\n请求头:  ${common.safeJSONStingify(reqHeaders)}\n请求者IP: ${ip}`);
 
     if (typeof logic[action] != 'function') {
@@ -81,6 +76,19 @@ router.post('/:action', function (req, res, next) {
                 }
             });
             break;
+            
+        case /^saveMsg$/.test(action):
+            params = {
+                "content": ""
+            };
+            logic.saveMsg(reqBody, ip, function (err, res) {
+                if (err == null) {
+                    retf(res);
+                } else {
+                    retf(err);
+                }
+            });
+            break;
         default:
             retf(iRet(CODE.ERROR_REQ_TYPE, MESSAGE.ERROR.ERROR_REQ_TYPE));
             break;
@@ -108,27 +116,16 @@ router.get('/:action', (req, res, next) => {
         reqQuery = req.query,
         reqHeaders = req.headers,
         ip = common.getClientIp(req),
-        reqBodyPre,
-        reqBody = {},
-        params;
+        reqBody = {};
     console.log(`\n接口名称[s]：${action}\n请求体:  ${common.safeJSONStingify(reqQuery)}\n请求头:  ${common.safeJSONStingify(reqHeaders)}\n请求者IP: ${ip}`);
 
     if (typeof logic[action] != 'function') {
         retf(iRet(CODE.ERROR_API, MESSAGE.ERROR.ERROR_API));
         return;
     }
-    console.log('action:', /^${api_cons.API_URL.TEST}$/.test(action));
     
     switch (true) {
-        case /^api_cons.API_URL.TEST$/.test(action):
-            params = {
-            };
-
-            if (!common.verifyParam(params, reqBody)) {
-                retf(iRet(CODE.ERROR_PARAM, MESSAGE.ERROR.ERROR_PARAM));
-                return;
-            }
-
+        case /^test$/.test(action):
             logic.test(reqBody, function (err, res) {
                 if (err == null) {
                     retf(res);

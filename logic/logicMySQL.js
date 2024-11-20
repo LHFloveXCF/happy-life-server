@@ -12,7 +12,7 @@ const connection = mysql.createConnection({
 			"multipleStatements": true
 });
 
-exports.pool = mysql.createPool({
+const pool = mysql.createPool({
 	host: dbConfig.HOST,
 	user: dbConfig.USER,
 	database: dbConfig.DB,
@@ -25,3 +25,25 @@ exports.pool = mysql.createPool({
 	enableKeepAlive: true,
 	keepAliveInitialDelay: 0,
   });
+
+
+function executeQuery(sql, params, callback) {
+	pool.getConnection((err, connection) => {
+	  if (err) {
+		return callback(err, null);
+	  }
+
+	  connection.execute(sql, params, (error, results, fields) => {
+		connection.release();
+		if (error) {
+		  return callback(error, null);
+		}
+		callback(null, results);
+	  });
+	});
+  }
+   
+  // 导出executeQuery函数，以便在其他文件中使用
+  module.exports = {
+	executeQuery
+  };

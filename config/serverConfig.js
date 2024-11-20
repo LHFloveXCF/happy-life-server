@@ -9,7 +9,7 @@ exports.REDIS_CONF = {																		//Redis 的配置
 exports.MYSQL_CONF = {																		//MySQL 的配置
     PORT: 3306,
     HOST: 'localhost',
-    DB: 'gm_server',
+    DB: 'lucky_momo',
     USER: 'root',
     PASS: '123456'
 };
