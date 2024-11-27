@@ -16,6 +16,7 @@ app.use(bodyParser.json({ limit: '50mb' }));							//使用JSON有效负载解�
 app.use(bodyParser.urlencoded({ extended: false, limit: '50mb' }));		//使用urlencoded有效负载解析传入的请求。使用querystring库解析URL编码数据；最大请求体大小50mb
 app.use(cookieParser());												//读取cookie
 app.use(express.static(path.join(__dirname, 'public')));				//提供静态文件
+app.use('/show', express.static('uploads'));
 
 //前后端分离，协议接口细化
 app.use('/api/', index);			//POST 处理GM系统内部逻辑; GET 静态资源下载

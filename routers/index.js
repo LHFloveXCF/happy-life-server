@@ -11,8 +11,20 @@ let express = require('express'),
     MESSAGE = require('../logic/returnObj').MESSAGE,
     fs = require('fs'),
     api_cons = require('../utils/constants_api'),
+    multer = require('multer'),
     path = require('path');
 
+// 设置Multer存储配置
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/');
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ storage: storage });
 
 //设置跨域访问
 router.all('*', function (req, res, next) {
@@ -22,6 +34,12 @@ router.all('*', function (req, res, next) {
     res.header("X-Powered-By", '3.2.1');
     res.header("Content-Type", "application/json;charset=utf-8");
     next();
+});
+
+// 定义文件上传API端点
+router.post('/upload', upload.single('file'), (req, res) => {        
+    const downloadUrl = `http://localhost:18141/uploads/${req.file.filename}`;
+    res.send({ message: 'File uploaded successfully', url: downloadUrl });
 });
 
 router.post('/:action', function (req, res, next) {
