@@ -41,17 +41,15 @@ function logInsert(reqBody, ip, callBack) {
             mysqlC.release(client);
         });
     });
-}
+};
 
 function test(reqBody, callBack) {
     callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.MULTILINGUAL_INSERT));
-}
+};
 
 function saveMsg(reqBody, ip, callBack) {
-    console.log("ip: ", ip);
-    
     let params = ['1', reqBody.content]
-    let sql = "INSERT INTO `user_msg` (`use_id`, `msg`, `time`) VALUES (?, ?, NOW());";
+    let sql = "INSERT INTO `msg` (`user_id`, `msg`, `time`) VALUES (?, ?, NOW());";
     mysqlC.executeQuery(sql, params, (error, results) => {
         if (error) {
             callBack(iRET(CODE.ERROR_INTERNAL, error.stack), null);
@@ -59,10 +57,10 @@ function saveMsg(reqBody, ip, callBack) {
             callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.MULTILINGUAL_INSERT));
         }
     });
-}
+};
 
 function getMsg(reqBody, callBack) {
-    let sql = "SELECT * FROM user_msg;";
+    let sql = "SELECT * FROM msg;";
     let params = []
     mysqlC.executeQuery(sql, params, (error, results) => {
         if (error) {
@@ -71,8 +69,36 @@ function getMsg(reqBody, callBack) {
             callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.MULTILINGUAL_INSERT, results));
         }
     });
-}
+};
 
+function getArticle(reqBody, callBack) {
+    let sql = "SELECT * FROM article;";
+    let params = []
+    mysqlC.executeQuery(sql, params, (error, results) => {
+        if (error) {
+            callBack(iRET(CODE.ERROR_INTERNAL, error.stack), null);
+        } else {            
+            callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.MULTILINGUAL_INSERT, results));
+        }
+    });
+};
+
+function saveArticle(reqBody, callBack) {
+    console.log("llll", reqBody.article);
+    
+    let sql = "INSERT INTO `article` (`user_id`, `article_title`, `article_icon`, `article_content`, `article_keys`) VALUES (?, ?, ?, ?, ?);";
+    let params = [1, 'test', 'test', reqBody.article, 'test, test']
+    mysqlC.executeQuery(sql, params, (error, results) => {
+        if (error) {
+            callBack(iRET(CODE.ERROR_INTERNAL, error.stack), null);
+        } else {            
+            callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.MULTILINGUAL_INSERT));
+        }
+    });
+};
+
+exports.saveArticle = saveArticle;
+exports.getArticle = getArticle;
 exports.getMsg = getMsg;
 exports.saveMsg = saveMsg;
 exports.logInsert = logInsert;

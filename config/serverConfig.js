@@ -11,5 +11,5 @@ exports.MYSQL_CONF = {																		//MySQL 的配置
     HOST: 'localhost',
     DB: 'lucky_momo',
     USER: 'root',
-    PASS: '123456'
+    PASS: 'feng0308'
 };

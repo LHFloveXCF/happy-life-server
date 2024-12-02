@@ -16,3 +16,13 @@ CREATE TABLE `user` (
   `user_avatar` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE INDEX `user_id_UNIQUE` (`user_id` ASC)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+  CREATE TABLE `lucky_momo`.`article` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `user_id` INT NOT NULL COMMENT '用户ID',
+  `article_title` VARCHAR(45) NOT NULL COMMENT '标题',
+  `article_icon` VARCHAR(45) NOT NULL COMMENT '封面图片路径',
+  `article_content` VARCHAR(45) NOT NULL COMMENT '内容',
+  `article_keys` VARCHAR(45) NOT NULL COMMENT '关键字',
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

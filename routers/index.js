@@ -37,7 +37,7 @@ router.all('*', function (req, res, next) {
 });
 
 // 定义文件上传API端点
-router.post('/upload', upload.single('file'), (req, res) => {        
+router.post('/upload', upload.single('file'), (req, res) => {
     const downloadUrl = `http://localhost:18141/uploads/${req.file.filename}`;
     res.send({ message: 'File uploaded successfully', url: downloadUrl });
 });
@@ -74,19 +74,12 @@ router.post('/:action', function (req, res, next) {
     }
 
     switch (true) {
-        case /^logInsert$/.test(action):
+        case /^saveArticle$/.test(action):
             params = {
-                "userNickName": "",
-                "optType": "",
-                "content": ""
+                "article": "",
             };
 
-            if (!common.verifyParam(params, reqBody)) {
-                retf(iRet(CODE.ERROR_PARAM, MESSAGE.ERROR.ERROR_PARAM));
-                return;
-            }
-
-            logic.logInsert(reqBody, ip, function (err, res) {
+            logic.saveArticle(reqBody, function (err, res) {
                 if (err == null) {
                     retf(res);
                 } else {
@@ -145,6 +138,15 @@ router.get('/:action', (req, res, next) => {
     switch (true) {
         case /^getMsg$/.test(action):
             logic.getMsg(reqBody, function (err, res) {
+                if (err == null) {
+                    retf(res);
+                } else {
+                    retf(err);
+                }
+            });
+            break;
+        case /^getArticle$/.test(action):
+            logic.getArticle(reqBody, function (err, res) {
                 if (err == null) {
                     retf(res);
                 } else {
