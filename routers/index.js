@@ -38,7 +38,7 @@ router.all('*', function (req, res, next) {
 
 // 定义文件上传API端点
 router.post('/upload', upload.single('file'), (req, res) => {
-    const downloadUrl = `http://localhost:18141/uploads/${req.file.filename}`;
+    const downloadUrl = `http://localhost:18141/show/${req.file.filename}`;
     res.send({ message: 'File uploaded successfully', url: downloadUrl });
 });
 
