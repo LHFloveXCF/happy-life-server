@@ -83,11 +83,9 @@ function getArticle(reqBody, callBack) {
     });
 };
 
-function saveArticle(reqBody, callBack) {
-    console.log("llll", reqBody.article);
-    
+function saveArticle(reqBody, callBack) {    
     let sql = "INSERT INTO `article` (`user_id`, `article_title`, `article_icon`, `article_content`, `article_keys`) VALUES (?, ?, ?, ?, ?);";
-    let params = [1, 'test', 'test', reqBody.article, 'test, test']
+    let params = [1, reqBody.title, reqBody.image, reqBody.article, 'test, test']
     mysqlC.executeQuery(sql, params, (error, results) => {
         if (error) {
             callBack(iRET(CODE.ERROR_INTERNAL, error.stack), null);
