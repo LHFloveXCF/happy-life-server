@@ -26,3 +26,6 @@ CREATE TABLE `user` (
   `article_keys` VARCHAR(255) NOT NULL COMMENT '关键字',
   PRIMARY KEY (`id`),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+  ALTER TABLE `article` 
+ADD COLUMN `article_time` BIGINT(64) NOT NULL COMMENT '发布时间' AFTER `article_keys`;
