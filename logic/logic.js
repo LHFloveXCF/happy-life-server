@@ -85,7 +85,8 @@ function getArticle(reqBody, callBack) {
 
 function saveArticle(reqBody, callBack) {    
     let sql = "INSERT INTO `article` (`user_id`, `article_title`, `article_icon`, `article_content`, `article_keys`, `article_time`) VALUES (?, ?, ?, ?, ?, ?);";
-    let params = [1, reqBody.title, reqBody.image, reqBody.article, 'test, test', new Date().getMilliseconds]
+    let time = new Date().getTime();
+    let params = [1, reqBody.title, reqBody.image, reqBody.article, 'test, test', time];
     mysqlC.executeQuery(sql, params, (error, results) => {
         if (error) {
             callBack(iRET(CODE.ERROR_INTERNAL, error.stack), null);
