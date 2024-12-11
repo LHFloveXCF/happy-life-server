@@ -73,4 +73,15 @@ CREATE TABLE `role_permission` (
 DEFAULT CHARACTER SET = utf8mb4
 COMMENT = '角色权限关联表';
 
+CREATE TABLE `lucky_momo`.`file` (
+  `file_id` INT NOT NULL COMMENT '文件ID；自增',
+  `file_md5` VARCHAR(45) NOT NULL COMMENT '文件的MD5值，唯一的',
+  `file_path` VARCHAR(255) NOT NULL COMMENT '文件对应的实际路径，时间戳.文件类型',
+  PRIMARY KEY (`file_id`),
+  UNIQUE INDEX `file_md5_UNIQUE` (`file_md5` ASC))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COMMENT = '文件列表;记录用户上传的问题，节省存储空间';
+
+
 

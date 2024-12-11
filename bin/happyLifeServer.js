@@ -1,6 +1,7 @@
 let app = require('../app');
+mysqlC = require('../logic/logicMySQL'),
 	http = require('http');
-	PORT = require('../config/config').PORT;
+PORT = require('../config/config').PORT;
 
 
 /**
@@ -74,3 +75,15 @@ function onListening() {
 		: 'port ' + addr.port;
 	console.info("==> Listening on %s. ", bind);
 }
+
+// 创建数据库连接并执行查询
+(async function initializeDatabase() {
+	let sql = "SELECT * FROM file;";
+	let params = []
+	mysqlC.executeQuery(sql, params, (error, results) => {
+		if (error) {
+		} else {
+			console.log("variableName:", results);
+		}
+	});
+})();

@@ -64,6 +64,7 @@ router.post('/upload', upload.single('file'), (req, res) => {
     if (!file) {
         return res.send({ message: 'File already exists', code: CODE.UPLOAD_ERR });
     }
+
     const filePath = file.path;
     // 计算上传文件的哈希值
     calculateHash(filePath, 'md5', (err, fileHash) => {
