@@ -46,7 +46,7 @@ function logInsert(reqBody, ip, callBack) {
 function test(reqBody, callBack) {
     callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.MULTILINGUAL_INSERT));
 };
-
+// 保存留言
 function saveMsg(reqBody, ip, callBack) {
     let params = ['1', reqBody.content]
     let sql = "INSERT INTO `msg` (`user_id`, `msg`, `time`) VALUES (?, ?, NOW());";
@@ -58,44 +58,59 @@ function saveMsg(reqBody, ip, callBack) {
         }
     });
 };
-
+// 查询全部留言
 function getMsg(reqBody, callBack) {
     let sql = "SELECT * FROM msg;";
     let params = []
     mysqlC.executeQuery(sql, params, (error, results) => {
         if (error) {
             callBack(iRET(CODE.ERROR_INTERNAL, error.stack), null);
-        } else {            
+        } else {
             callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.MULTILINGUAL_INSERT, results));
         }
     });
 };
-
+// 查询全部文章
 function getArticle(reqBody, callBack) {
     let sql = "SELECT * FROM article;";
     let params = []
     mysqlC.executeQuery(sql, params, (error, results) => {
         if (error) {
             callBack(iRET(CODE.ERROR_INTERNAL, error.stack), null);
-        } else {            
+        } else {
             callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.MULTILINGUAL_INSERT, results));
         }
     });
 };
-
-function saveArticle(reqBody, callBack) {    
+// 保存文章
+function saveArticle(reqBody, callBack) {
     let sql = "INSERT INTO `article` (`user_id`, `article_title`, `article_icon`, `article_content`, `article_keys`, `article_time`) VALUES (?, ?, ?, ?, ?, ?);";
     let time = new Date().getTime();
     let params = [1, reqBody.title, reqBody.image, reqBody.article, 'test, test', time];
     mysqlC.executeQuery(sql, params, (error, results) => {
         if (error) {
             callBack(iRET(CODE.ERROR_INTERNAL, error.stack), null);
-        } else {            
+        } else {
             callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.MULTILINGUAL_INSERT));
         }
     });
 };
 
+// 登录管理后台
+function loginBack(reqBody, callBack) {
+    let sql = "select * from role_permission rp join (SELECT role_id FROM lucky_momo.user  where user_id = ? and pass_word = ?) u where rp.role_id = u.role_id;";
+    mysqlC.executeQuery(sql, [reqBody.userName, reqBody.passWord], (error, results) => {
+        if (error) {
+            callBack(iRET(CODE.ERROR_INTERNAL, error.stack), null);
+        } else {
+            if (results[0] !== null) {
+                callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.LOGIN_CHECKED, results));
+            }
+        }
+    });
+};
+
+exports.loginBack = loginBack;
 exports.saveArticle = saveArticle;
 exports.getArticle = getArticle;
 exports.getMsg = getMsg;

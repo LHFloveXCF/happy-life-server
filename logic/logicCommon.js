@@ -16,8 +16,6 @@ function getClientIp(req) {
 }
 
 function iRET(status, message, data = null) {
-    console.log("data： ", data);
-    
     let RET = require('./returnObj').RET;
     RET.status = status;
     RET.message = message;

@@ -12,7 +12,11 @@ let express = require('express'),
     fs = require('fs'),
     api_cons = require('../utils/constants_api'),
     multer = require('multer'),
+    crypto = require('crypto'),
     path = require('path');
+
+// 用于存储文件哈希值的内存对象（在实际应用中，使用数据库或文件系统）
+const fileHashes = {};
 
 // 设置Multer存储配置
 const storage = multer.diskStorage({
@@ -36,10 +40,54 @@ router.all('*', function (req, res, next) {
     next();
 });
 
+// 计算文件的MD5哈希值
+function calculateHash(filePath, algorithm = 'md5', callback) {
+    const hash = crypto.createHash(algorithm);
+    const inputStream = fs.createReadStream(filePath);
+
+    inputStream.on('data', (data) => {
+        hash.update(data);
+    });
+
+    inputStream.on('end', () => {
+        callback(null, hash.digest('hex'));
+    });
+
+    inputStream.on('error', (err) => {
+        callback(err);
+    });
+}
+
 // 定义文件上传API端点
 router.post('/upload', upload.single('file'), (req, res) => {
-    const downloadUrl = `http://localhost:18141/show/${req.file.filename}`;
-    res.send({ message: 'File uploaded successfully', url: downloadUrl });
+    const file = req.file;
+    if (!file) {
+        return res.send({ message: 'File already exists', code: CODE.UPLOAD_ERR });
+    }
+    const filePath = file.path;
+    // 计算上传文件的哈希值
+    calculateHash(filePath, 'md5', (err, fileHash) => {
+        if (err) {
+            return res.send({ message: 'Error calculating hash', code: CODE.UPLOAD_ERR });
+        }
+        // 检查文件是否已存在
+        if (fileHashes[fileHash]) {
+            // 删除新上传的临时文件，因为它是一个重复的文件
+            fs.unlink(filePath, (unlinkErr) => {
+                if (unlinkErr) {
+                    console.error('Error deleting duplicate file:', unlinkErr);
+                }
+                const existingFileName = fileHashes[fileHash];
+                let downloadUrl = `http://localhost:18141/show/${existingFileName}`;
+                res.send({ message: 'File already exists', url: downloadUrl, code: CODE.UPLOAD_REPEAT });
+            });
+        } else {
+            // 如果文件不存在，则保存哈希值（在实际应用中，您可能还需要在数据库中保存其他信息）
+            fileHashes[fileHash] = req.file.filename;
+            let downloadUrl = `http://localhost:18141/show/${req.file.filename}`;
+            res.send({ message: '', url: downloadUrl, code: CODE.UPLOAD_SUC });
+        }
+    });
 });
 
 router.post('/:action', function (req, res, next) {
@@ -75,10 +123,6 @@ router.post('/:action', function (req, res, next) {
 
     switch (true) {
         case /^saveArticle$/.test(action):
-            params = {
-                "article": "",
-            };
-
             logic.saveArticle(reqBody, function (err, res) {
                 if (err == null) {
                     retf(res);
@@ -89,10 +133,17 @@ router.post('/:action', function (req, res, next) {
             break;
 
         case /^saveMsg$/.test(action):
-            params = {
-                "content": ""
-            };
             logic.saveMsg(reqBody, ip, function (err, res) {
+                if (err == null) {
+                    retf(res);
+                } else {
+                    retf(err);
+                }
+            });
+            break;
+
+        case /^loginBack$/.test(action):
+            logic.loginBack(reqBody, function (err, res) {
                 if (err == null) {
                     retf(res);
                 } else {
