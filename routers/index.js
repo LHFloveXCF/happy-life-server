@@ -13,10 +13,10 @@ let express = require('express'),
     api_cons = require('../utils/constants_api'),
     multer = require('multer'),
     crypto = require('crypto'),
+    server = require('../bin/happyLifeServer'),
     path = require('path');
 
-// 用于存储文件哈希值的内存对象（在实际应用中，使用数据库或文件系统）
-const fileHashes = {};
+
 
 // 设置Multer存储配置
 const storage = multer.diskStorage({
@@ -72,21 +72,24 @@ router.post('/upload', upload.single('file'), (req, res) => {
             return res.send({ message: 'Error calculating hash', code: CODE.UPLOAD_ERR });
         }
         // 检查文件是否已存在
-        if (fileHashes[fileHash]) {
+        const hasPath = server.checkFileExists(fileHash);
+        if (hasPath) {
             // 删除新上传的临时文件，因为它是一个重复的文件
             fs.unlink(filePath, (unlinkErr) => {
                 if (unlinkErr) {
                     console.error('Error deleting duplicate file:', unlinkErr);
                 }
-                const existingFileName = fileHashes[fileHash];
+                const existingFileName = hasPath;
                 let downloadUrl = `http://localhost:18141/show/${existingFileName}`;
                 res.send({ message: 'File already exists', url: downloadUrl, code: CODE.UPLOAD_REPEAT });
             });
         } else {
             // 如果文件不存在，则保存哈希值（在实际应用中，您可能还需要在数据库中保存其他信息）
-            fileHashes[fileHash] = req.file.filename;
+            server.addFileCache(fileHash, req.file.fieldname);
             let downloadUrl = `http://localhost:18141/show/${req.file.filename}`;
             res.send({ message: '', url: downloadUrl, code: CODE.UPLOAD_SUC });
+
+            logic.saveFilePath({fileMd5: fileHash, filePath: req.file.filename}, null)
         }
     });
 });

@@ -1,7 +1,7 @@
-let app = require('../app');
-mysqlC = require('../logic/logicMySQL'),
-	http = require('http');
-PORT = require('../config/config').PORT;
+let app = require('../app'),
+	mysqlC = require('../logic/logicMySQL'),
+	http = require('http'),
+	PORT = require('../config/config').PORT;
 
 
 /**
@@ -76,14 +76,33 @@ function onListening() {
 	console.info("==> Listening on %s. ", bind);
 }
 
+// 文件缓存
+let fileHashes = {};
+function setFileCache(fileCacheData) {
+    fileCacheData.map(item => {
+        fileHashes[item.file_md5] = item.file_path;
+    });
+};
+
 // 创建数据库连接并执行查询
 (async function initializeDatabase() {
 	let sql = "SELECT * FROM file;";
-	let params = []
+	let params = [];
 	mysqlC.executeQuery(sql, params, (error, results) => {
 		if (error) {
 		} else {
-			console.log("variableName:", results);
+			setFileCache(results);
 		}
 	});
 })();
+
+function checkFileExists(fileMd5) {
+	return fileHashes[fileMd5];
+}
+
+function addFileCache(fileMd5, filePath) {
+	fileHashes[fileMd5] = filePath;
+}
+
+exports.addFileCache = addFileCache;
+exports.checkFileExists = checkFileExists;

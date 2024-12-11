@@ -95,6 +95,14 @@ function saveArticle(reqBody, callBack) {
         }
     });
 };
+// 保存文件md5 路径信息
+function saveFilePath(fileParams, callBack) {
+    let sql = "INSERT INTO `file` (`file_md5`, `file_path`) VALUES (?, ?);";
+    let params = [fileParams.fileMd5, fileParams.filePath];
+    mysqlC.executeQuery(sql, params, (error, results) => {
+        
+    });
+};
 
 // 登录管理后台
 function loginBack(reqBody, callBack) {
@@ -110,6 +118,8 @@ function loginBack(reqBody, callBack) {
     });
 };
 
+
+exports.saveFilePath = saveFilePath;
 exports.loginBack = loginBack;
 exports.saveArticle = saveArticle;
 exports.getArticle = getArticle;
