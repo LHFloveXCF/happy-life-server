@@ -40,6 +40,7 @@ exports.MESSAGE = {
 		USER_PASS_RESET: '用户密码重置成功',
 
 		LOGIN_CHECKED: '管理后台登录成功',
+		ARTICLE_DELETE: '文章删除成功',
 	},
 	ERROR: {
 		ERROR_API: '请核实请求接口名称',

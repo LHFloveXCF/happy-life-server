@@ -89,7 +89,7 @@ router.post('/upload', upload.single('file'), (req, res) => {
             let downloadUrl = `http://localhost:18141/show/${req.file.filename}`;
             res.send({ message: '', url: downloadUrl, code: CODE.UPLOAD_SUC });
 
-            logic.saveFilePath({fileMd5: fileHash, filePath: req.file.filename}, null)
+            logic.saveFilePath({ fileMd5: fileHash, filePath: req.file.filename }, null)
         }
     });
 });
@@ -148,6 +148,15 @@ router.post('/:action', function (req, res, next) {
 
         case /^loginBack$/.test(action):
             logic.loginBack(reqBody, function (err, res) {
+                if (err == null) {
+                    retf(res);
+                } else {
+                    retf(err);
+                }
+            });
+            break;
+        case /^deleteArticle$/.test(action):
+            logic.deleteArticle(reqBody, function (err, res) {
                 if (err == null) {
                     retf(res);
                 } else {

@@ -117,8 +117,22 @@ function loginBack(reqBody, callBack) {
         }
     });
 };
+// 删除文章
+function deleteArticle(reqBody, callBack) {
+    let sql = "delete from article where id = ?;";
+    mysqlC.executeQuery(sql, [reqBody.id], (error, results) => {
+        if (error) {
+            callBack(iRET(CODE.ERROR_INTERNAL, error.stack), null);
+        } else {
+            if (results[0] !== null) {
+                callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.ARTICLE_DELETE, results));
+            }
+        }
+    });
+};
 
 
+exports.deleteArticle = deleteArticle;
 exports.saveFilePath = saveFilePath;
 exports.loginBack = loginBack;
 exports.saveArticle = saveArticle;
