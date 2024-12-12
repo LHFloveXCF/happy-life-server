@@ -145,9 +145,17 @@ router.post('/:action', function (req, res, next) {
                 }
             });
             break;
-
         case /^loginBack$/.test(action):
             logic.loginBack(reqBody, function (err, res) {
+                if (err == null) {
+                    retf(res);
+                } else {
+                    retf(err);
+                }
+            });
+            break;
+        case /^userRigster$/.test(action):
+            logic.userRigster(reqBody, function (err, res) {
                 if (err == null) {
                     retf(res);
                 } else {

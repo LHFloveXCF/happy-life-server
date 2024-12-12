@@ -101,6 +101,19 @@ function saveFilePath(fileParams, callBack) {
     });
 };
 
+// 用户注册
+function userRigster(reqBody, callBack) {
+    let sql = "INSERT INTO `user` (`user_name`, `pass_word`, `user_email`, `user_avatar`) VALUES (?, ?, ?, ?);";
+    mysqlC.executeQuery(sql, [reqBody.username, reqBody.password, reqBody.email, "1"], (error, results) => {
+        if (error) {
+            callBack(iRET(CODE.ERROR_INTERNAL, error.stack), null);
+        } else {
+            if (results[0] !== null) {
+                callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.USER_ADD, results));
+            }
+        }
+    });
+};
 // 登录管理后台
 function loginBack(reqBody, callBack) {
     let sql = "select * from role_permission rp join (SELECT role_id FROM lucky_momo.user  where user_id = ? and pass_word = ?) u where rp.role_id = u.role_id;";
@@ -153,6 +166,7 @@ function deleteImage(reqBody, callBack) {
     });
 };
 
+exports.userRigster = userRigster;
 exports.deleteImage = deleteImage;
 exports.getImages = getImages;
 exports.deleteArticle = deleteArticle;
