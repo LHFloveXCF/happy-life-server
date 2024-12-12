@@ -41,6 +41,14 @@ exports.MESSAGE = {
 
 		LOGIN_CHECKED: '管理后台登录成功',
 		ARTICLE_DELETE: '文章删除成功',
+		ARTICLE_SAVE: '文章保存成功',
+		ARTICLE_LOOK: '文章查询成功',
+		MSG_LOOK: '留言查询成功',
+		MSG_SAVE: '留言保存成功',
+		
+		IMAGE_LOOK: '图片查询成功',
+		IMAGE_DELETE: '图片删除成功',
+
 	},
 	ERROR: {
 		ERROR_API: '请核实请求接口名称',

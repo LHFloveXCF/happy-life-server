@@ -164,6 +164,15 @@ router.post('/:action', function (req, res, next) {
                 }
             });
             break;
+        case /^deleteImage$/.test(action):
+            logic.deleteImage(reqBody, function (err, res) {
+                if (err == null) {
+                    retf(res);
+                } else {
+                    retf(err);
+                }
+            });
+            break;
         default:
             retf(iRet(CODE.ERROR_REQ_TYPE, MESSAGE.ERROR.ERROR_REQ_TYPE));
             break;
@@ -211,6 +220,15 @@ router.get('/:action', (req, res, next) => {
             break;
         case /^getArticle$/.test(action):
             logic.getArticle(reqBody, function (err, res) {
+                if (err == null) {
+                    retf(res);
+                } else {
+                    retf(err);
+                }
+            });
+            break;
+        case /^getImages$/.test(action):
+            logic.getImages(reqBody, function (err, res) {
                 if (err == null) {
                     retf(res);
                 } else {

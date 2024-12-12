@@ -43,9 +43,6 @@ function logInsert(reqBody, ip, callBack) {
     });
 };
 
-function test(reqBody, callBack) {
-    callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.MULTILINGUAL_INSERT));
-};
 // 保存留言
 function saveMsg(reqBody, ip, callBack) {
     let params = ['1', reqBody.content]
@@ -54,7 +51,7 @@ function saveMsg(reqBody, ip, callBack) {
         if (error) {
             callBack(iRET(CODE.ERROR_INTERNAL, error.stack), null);
         } else {
-            callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.MULTILINGUAL_INSERT));
+            callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.MSG_SAVE));
         }
     });
 };
@@ -66,7 +63,7 @@ function getMsg(reqBody, callBack) {
         if (error) {
             callBack(iRET(CODE.ERROR_INTERNAL, error.stack), null);
         } else {
-            callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.MULTILINGUAL_INSERT, results));
+            callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.MSG_LOOK, results));
         }
     });
 };
@@ -78,7 +75,7 @@ function getArticle(reqBody, callBack) {
         if (error) {
             callBack(iRET(CODE.ERROR_INTERNAL, error.stack), null);
         } else {
-            callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.MULTILINGUAL_INSERT, results));
+            callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.ARTICLE_LOOK, results));
         }
     });
 };
@@ -91,7 +88,7 @@ function saveArticle(reqBody, callBack) {
         if (error) {
             callBack(iRET(CODE.ERROR_INTERNAL, error.stack), null);
         } else {
-            callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.MULTILINGUAL_INSERT));
+            callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.ARTICLE_SAVE));
         }
     });
 };
@@ -130,8 +127,34 @@ function deleteArticle(reqBody, callBack) {
         }
     });
 };
+// 查询全部图片
+function getImages(reqBody, callBack) {
+    let sql = "SELECT * FROM file;";
+    let params = []
+    mysqlC.executeQuery(sql, params, (error, results) => {
+        if (error) {
+            callBack(iRET(CODE.ERROR_INTERNAL, error.stack), null);
+        } else {
+            callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.IMAGE_LOOK, results));
+        }
+    });
+};
+// 删除图片
+function deleteImage(reqBody, callBack) {
+    let sql = "delete from file where file_id = ?;";
+    mysqlC.executeQuery(sql, [reqBody.id], (error, results) => {
+        if (error) {
+            callBack(iRET(CODE.ERROR_INTERNAL, error.stack), null);
+        } else {
+            if (results[0] !== null) {
+                callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.IMAGE_DELETE, results));
+            }
+        }
+    });
+};
 
-
+exports.deleteImage = deleteImage;
+exports.getImages = getImages;
 exports.deleteArticle = deleteArticle;
 exports.saveFilePath = saveFilePath;
 exports.loginBack = loginBack;
