@@ -181,6 +181,42 @@ router.post('/:action', function (req, res, next) {
                 }
             });
             break;
+        case /^deleteUser$/.test(action):
+            logic.deleteUser(reqBody, function (err, res) {
+                if (err == null) {
+                    retf(res);
+                } else {
+                    retf(err);
+                }
+            });
+            break;
+        case /^deleteRole$/.test(action):
+            logic.deleteRole(reqBody, function (err, res) {
+                if (err == null) {
+                    retf(res);
+                } else {
+                    retf(err);
+                }
+            });
+            break;
+        case /^updateRole$/.test(action):
+            logic.updateRole(reqBody, function (err, res) {
+                if (err == null) {
+                    retf(res);
+                } else {
+                    retf(err);
+                }
+            });
+            break;
+        case /^addRole$/.test(action):
+            logic.addRole(reqBody, function (err, res) {
+                if (err == null) {
+                    retf(res);
+                } else {
+                    retf(err);
+                }
+            });
+            break;
         default:
             retf(iRet(CODE.ERROR_REQ_TYPE, MESSAGE.ERROR.ERROR_REQ_TYPE));
             break;
@@ -237,6 +273,24 @@ router.get('/:action', (req, res, next) => {
             break;
         case /^getImages$/.test(action):
             logic.getImages(reqBody, function (err, res) {
+                if (err == null) {
+                    retf(res);
+                } else {
+                    retf(err);
+                }
+            });
+            break;
+        case /^getUser$/.test(action):
+            logic.getUser(reqBody, function (err, res) {
+                if (err == null) {
+                    retf(res);
+                } else {
+                    retf(err);
+                }
+            });
+            break;
+        case /^getRole$/.test(action):
+            logic.getRole(reqBody, function (err, res) {
                 if (err == null) {
                     retf(res);
                 } else {

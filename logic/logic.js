@@ -165,7 +165,89 @@ function deleteImage(reqBody, callBack) {
         }
     });
 };
+// 查询全部图片
+function getUser(reqBody, callBack) {
+    let sql = "SELECT * FROM user;";
+    let params = []
+    mysqlC.executeQuery(sql, params, (error, results) => {
+        if (error) {
+            callBack(iRET(CODE.ERROR_INTERNAL, error.stack), null);
+        } else {
+            callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.USER_QUERY, results));
+        }
+    });
+};
+// 删除用户
+function deleteUser(reqBody, callBack) {
+    let sql = "delete from user where user_id = ?;";
+    mysqlC.executeQuery(sql, [reqBody.id], (error, results) => {
+        if (error) {
+            callBack(iRET(CODE.ERROR_INTERNAL, error.stack), null);
+        } else {
+            if (results[0] !== null) {
+                callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.USER_DELETE, results));
+            }
+        }
+    });
+};
+// 查询全部角色
+function getRole(reqBody, callBack) {
+    let sql = "SELECT * FROM role;";
+    let params = []
+    mysqlC.executeQuery(sql, params, (error, results) => {
+        if (error) {
+            callBack(iRET(CODE.ERROR_INTERNAL, error.stack), null);
+        } else {
+            callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.ROLE_GROUP_QUERY, results));
+        }
+    });
+};
+// 删除角色
+function deleteRole(reqBody, callBack) {
+    let sql = "delete from role where role_id = ?;";
+    mysqlC.executeQuery(sql, [reqBody.id], (error, results) => {
+        if (error) {
+            callBack(iRET(CODE.ERROR_INTERNAL, error.stack), null);
+        } else {
+            if (results[0] !== null) {
+                callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.ROLE_GROUP_UPDATE, results));
+            }
+        }
+    });
+};
+// 更新角色
+function updateRole(reqBody, callBack) {
+    let sql = "UPDATE `role` SET `role_id` = ?, `role_name` = ?, `role_desc` = ? WHERE (`id` = ?);";
+    mysqlC.executeQuery(sql, [reqBody.roleId, reqBody.name, reqBody.desc, reqBody.id], (error, results) => {
+        if (error) {
+            callBack(iRET(CODE.ERROR_INTERNAL, error.stack), null);
+        } else {
+            if (results[0] !== null) {
+                callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.ROLE_GROUP_UPDATE, results));
+            }
+        }
+    });
+};
+// 新增角色
+function addRole(reqBody, callBack) {
+    let sql = "INSERT INTO `role` (`role_id`, `role_name`, `role_desc`) VALUES (?, ?, ?);";
+    mysqlC.executeQuery(sql, [reqBody.roleId, reqBody.name, reqBody.desc], (error, results) => {
+        if (error) {
+            callBack(iRET(CODE.ERROR_INTERNAL, error.stack), null);
+        } else {
+            if (results[0] !== null) {
+                callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.ROLE_GROUP_ADD, results));
+            }
+        }
+    });
+};
 
+exports.addRole = addRole;
+exports.updateRole = updateRole;
+exports.deleteRole = deleteRole;
+exports.getRole = getRole;
+exports.getUser = getUser;
+exports.deleteUser = deleteUser;
 exports.userRigster = userRigster;
 exports.deleteImage = deleteImage;
 exports.getImages = getImages;

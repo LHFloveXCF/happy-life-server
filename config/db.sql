@@ -45,11 +45,12 @@ DEFAULT CHARACTER SET = utf8mb4
 COMMENT = '权限列表';
 
 CREATE TABLE `role` (
-  `role_id` INT NOT NULL AUTO_INCREMENT COMMENT '角色ID',
+  `id` INT NOT NULL AUTO_INCREMENT COMMENT '标识ID',
+  `role_id` INT NOT NULL COMMENT '角色ID',
   `role_name` VARCHAR(45) NOT NULL COMMENT '角色名字',
   `role_desc` LONGTEXT NULL COMMENT '角色描述',
-  PRIMARY KEY (`role_id`),
-  UNIQUE INDEX `role_name_UNIQUE` (`role_name` ASC)
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `role_id_UNIQUE` (`role_id` ASC)
 ) ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COMMENT = '角色列表';
