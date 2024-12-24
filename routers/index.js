@@ -135,6 +135,15 @@ router.post('/:action', function (req, res, next) {
                 }
             });
             break;
+        case /^addOneArticleMsg$/.test(action):
+            logic.addOneArticleMsg(reqBody, function (err, res) {
+                if (err == null) {
+                    retf(res);
+                } else {
+                    retf(err);
+                }
+            });
+            break;
 
         case /^saveMsg$/.test(action):
             logic.saveMsg(reqBody, ip, function (err, res) {
@@ -244,12 +253,22 @@ router.get('/:action', (req, res, next) => {
         reqQuery = req.query,
         reqHeaders = req.headers,
         ip = common.getClientIp(req),
+        reqBodyPre,
         reqBody = {};
     console.log(`\n接口名称[s]：${action}\n请求体:  ${common.safeJSONStingify(reqQuery)}\n请求头:  ${common.safeJSONStingify(reqHeaders)}\n请求者IP: ${ip}`);
 
     if (typeof logic[action] != 'function') {
         retf(iRet(CODE.ERROR_API, MESSAGE.ERROR.ERROR_API));
         return;
+    }
+
+    if (common.validateObject(reqQuery.data) && reqQuery.data.length > 0) {
+        reqBodyPre = common.safeJSONParse(reqQuery.data);
+        Object.keys(reqBodyPre).map(item => {
+            if (common.validateObject(reqBodyPre[item]) && reqBodyPre[item] !== '') {
+                reqBody[item] = reqBodyPre[item];
+            }
+        })
     }
 
     switch (true) {
@@ -264,6 +283,15 @@ router.get('/:action', (req, res, next) => {
             break;
         case /^getArticle$/.test(action):
             logic.getArticle(reqBody, function (err, res) {
+                if (err == null) {
+                    retf(res);
+                } else {
+                    retf(err);
+                }
+            });
+            break;
+        case /^getArticleMsg$/.test(action):
+            logic.getArticleMsg(reqBody, function (err, res) {
                 if (err == null) {
                     retf(res);
                 } else {

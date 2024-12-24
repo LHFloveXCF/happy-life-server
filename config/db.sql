@@ -32,7 +32,11 @@ ADD COLUMN `role_id` INT NULL COMMENT '角色ID' AFTER `user_avatar`;
   UNIQUE INDEX `id_UNIQUE` (`id` ASC)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
   ALTER TABLE `article` 
-ADD COLUMN `article_time` BIGINT(64) NOT NULL COMMENT '发布时间' AFTER `article_keys`;
+ADD COLUMN `article_time_create` BIGINT(64) NOT NULL COMMENT '发布时间' AFTER `article_keys`;
+  ALTER TABLE `article` 
+ADD COLUMN `article_time_update` BIGINT(64) NOT NULL DEFAULT 0 COMMENT '修改时间' AFTER `article_time_create`;
+  ALTER TABLE `article` 
+ADD COLUMN `article_state` INT NOT NULL DEFAULT 0  COMMENT '文章状态' AFTER `article_time_update`;
 
 CREATE TABLE `permissions` (
   `permission_id` INT NOT NULL AUTO_INCREMENT COMMENT '权限ID',
@@ -85,6 +89,20 @@ DEFAULT CHARACTER SET = utf8mb4
 COMMENT = '文件列表;记录用户上传的问题，节省存储空间';
 ALTER TABLE `file` 
 CHANGE COLUMN `file_id` `file_id` INT(11) NOT NULL AUTO_INCREMENT COMMENT '文件ID；自增' ;
+
+CREATE TABLE `article_msg` (
+  `id` INT NOT NULL AUTO_INCREMENT COMMENT '标识ID',
+  `msg_from` INT NOT NULL,
+  `msg_to` INT NOT NULL,
+  `article_id` INT NOT NULL,
+  `msg_time_create` BIGINT(64) NOT NULL,
+  `msg` LONGTEXT NULL COMMENT '留言内容',
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COMMENT = '文章评论表';
+
 
 
 

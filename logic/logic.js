@@ -81,9 +81,9 @@ function getArticle(reqBody, callBack) {
 };
 // 保存文章
 function saveArticle(reqBody, callBack) {
-    let sql = "INSERT INTO `article` (`user_id`, `article_title`, `article_icon`, `article_content`, `article_keys`, `article_time`) VALUES (?, ?, ?, ?, ?, ?);";
+    let sql = "INSERT INTO `article` (`user_id`, `article_title`, `article_icon`, `article_content`, `article_keys`, `article_time_create`, `article_time_update`, `article_state`) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
     let time = new Date().getTime();
-    let params = [1, reqBody.title, reqBody.image, reqBody.article, 'test, test', time];
+    let params = [1, reqBody.title, reqBody.image, reqBody.article, 'test, test', time, 0, 0];
     mysqlC.executeQuery(sql, params, (error, results) => {
         if (error) {
             callBack(iRET(CODE.ERROR_INTERNAL, error.stack), null);
@@ -116,12 +116,15 @@ function userRigster(reqBody, callBack) {
 };
 // 登录管理后台
 function loginBack(reqBody, callBack) {
-    let sql = "select * from role_permission rp join (SELECT role_id FROM lucky_momo.user  where user_id = ? and pass_word = ?) u where rp.role_id = u.role_id;";
+    let sql = "select * from role_permission rp join (SELECT role_id, user_id FROM user  where user_id = ? and pass_word = ?) u where rp.role_id = u.role_id;";
     mysqlC.executeQuery(sql, [reqBody.userName, reqBody.passWord], (error, results) => {
         if (error) {
             callBack(iRET(CODE.ERROR_INTERNAL, error.stack), null);
         } else {
-            if (results[0] !== null) {
+            if (results.length === 0) {
+                // 没有查询到数据
+                callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.LOGIN_CHECKED_FAIL, results));
+            } else {
                 callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.LOGIN_CHECKED, results));
             }
         }
@@ -241,7 +244,34 @@ function addRole(reqBody, callBack) {
         }
     });
 };
-
+// 查询全部文章评论
+function getArticleMsg(reqBody, callBack) {
+    let sql = "SELECT * FROM article_msg where article_id = ?;";    
+    let params = [reqBody.articleId]
+    mysqlC.executeQuery(sql, params, (error, results) => {
+        if (error) {
+            callBack(iRET(CODE.ERROR_INTERNAL, error.stack), null);
+        } else {
+            callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.ARTICLE_MSG_LOOK, results));
+        }
+    });
+};
+// 新增文章评论
+function addOneArticleMsg(reqBody, callBack) {
+    let sql = "INSERT INTO `article_msg` (`msg_from`, `msg_to`, `article_id`, `msg_time_create`, `msg`) VALUES (?, ?, ?, ?, ?);";
+    let time = new Date().getTime();
+    mysqlC.executeQuery(sql, [reqBody.userId, reqBody.toUserId, reqBody.articleId, time, reqBody.content], (error, results) => {
+        if (error) {
+            callBack(iRET(CODE.ERROR_INTERNAL, error.stack), null);
+        } else {
+            if (results.length !== 0) {
+                callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.ARTICLE_MSG_ADD, results));
+            }
+        }
+    });
+};
+exports.addOneArticleMsg = addOneArticleMsg;
+exports.getArticleMsg = getArticleMsg;
 exports.addRole = addRole;
 exports.updateRole = updateRole;
 exports.deleteRole = deleteRole;

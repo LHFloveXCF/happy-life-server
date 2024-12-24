@@ -25,6 +25,19 @@ function iRET(status, message, data = null) {
         delete RET.data;
     return RET;
 }
+function validateObject(obj) {
+    return (obj !== void 0 && obj !== null && obj !== 'null' && obj !== 'undefined');
+}
+function safeJSONParse(jsonStr) {
+    var obj = '';
+    try {
+        obj = JSON.parse(jsonStr);
+    } catch (e) {
+        obj = require("json-parse-safe")(jsonStr);
+    }
+    return obj;
+}
+
 function safeJSONStingify(jsonObj) {
     var str = '';
     try {
@@ -60,4 +73,6 @@ exports.iRET = iRET;
 exports.getClientIp = getClientIp;
 exports.safeJSONStingify = safeJSONStingify;
 exports.verifyParam = verifyParam;
+exports.validateObject = validateObject;
+exports.safeJSONParse = safeJSONParse;
 

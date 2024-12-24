@@ -40,9 +40,13 @@ exports.MESSAGE = {
 		USER_PASS_RESET: '用户密码重置成功',
 
 		LOGIN_CHECKED: '管理后台登录成功',
+		LOGIN_CHECKED_FAIL: '管理后台登录失败',
 		ARTICLE_DELETE: '文章删除成功',
 		ARTICLE_SAVE: '文章保存成功',
 		ARTICLE_LOOK: '文章查询成功',
+		ARTICLE_MSG_LOOK: '文章留言查询成功',
+		ARTICLE_MSG_ADD: '文章留言增加成功',
+
 		MSG_LOOK: '留言查询成功',
 		MSG_SAVE: '留言保存成功',
 		
