@@ -103,8 +103,8 @@ function saveFilePath(fileParams, callBack) {
 
 // 用户注册
 function userRigster(reqBody, callBack) {
-    let sql = "INSERT INTO `user` (`user_name`, `pass_word`, `user_email`, `user_avatar`) VALUES (?, ?, ?, ?);";
-    mysqlC.executeQuery(sql, [reqBody.username, reqBody.password, reqBody.email, "1"], (error, results) => {
+    let sql = "INSERT INTO `user` (`user_name`, `pass_word`, `user_email`, `user_avatar`, `role_id`) VALUES (?, ?, ?, ?, ?);";
+    mysqlC.executeQuery(sql, [reqBody.username, reqBody.password, reqBody.email, reqBody.avatar, 3], (error, results) => {
         if (error) {
             callBack(iRET(CODE.ERROR_INTERNAL, error.stack), null);
         } else {
@@ -125,7 +125,13 @@ function loginBack(reqBody, callBack) {
                 // 没有查询到数据
                 callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.LOGIN_CHECKED_FAIL, results));
             } else {
-                callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.LOGIN_CHECKED, results));
+                const user = results[0];
+                let userInfo = {
+                    "userId": user.user_id,
+                    "roleId": user.role_id,
+                    "userName": user.user_name
+                }
+                callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.LOGIN_CHECKED, userInfo));
             }
         }
     });
@@ -270,7 +276,41 @@ function addOneArticleMsg(reqBody, callBack) {
         }
     });
 };
+// 新增说说
+function addOneSay(reqBody, callBack) {
+    console.log("variableName:", reqBody);
+    let sql = "INSERT INTO `say` (`user_id`, `time`, `content`, `to_user_id`, `user_avatar`) VALUES (?, ?, ?, ?, ?);";
+    
+    let time = new Date().getTime();
+    let toUserId = 0;
+    if (reqBody.toUserId) {
+        toUserId = reqBody.toUserId;
+    };
+    mysqlC.executeQuery(sql, [reqBody.userId, time, reqBody.content, toUserId, reqBody.avatar], (error, results) => {
+        if (error) {
+            callBack(iRET(CODE.ERROR_INTERNAL, error.stack), null);
+        } else {
+            if (results.length !== 0) {
+                callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.SAY_ADD, results));
+            }
+        }
+    });
+};
+// 查询全部说说
+function getSay(reqBody, callBack) {
+    let sql = "select s.*, u.user_name from say s join user u on s.user_id = u.user_id;";    
+    let params = []
+    mysqlC.executeQuery(sql, params, (error, results) => {
+        if (error) {
+            callBack(iRET(CODE.ERROR_INTERNAL, error.stack), null);
+        } else {
+            callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.SAY_LOOK, results));
+        };
+    });
+};
+exports.getSay = getSay;
 exports.addOneArticleMsg = addOneArticleMsg;
+exports.addOneSay = addOneSay;
 exports.getArticleMsg = getArticleMsg;
 exports.addRole = addRole;
 exports.updateRole = updateRole;

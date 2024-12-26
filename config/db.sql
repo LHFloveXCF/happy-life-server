@@ -7,6 +7,7 @@ CREATE TABLE `user_msg` (
   `time` bigint(20) NOT NULL COMMENT '发送时间',
   PRIMARY KEY (`use_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 # 用户表
 CREATE TABLE `user` (
   `user_id` INT NOT NULL AUTO_INCREMENT,
@@ -14,11 +15,9 @@ CREATE TABLE `user` (
   `pass_word` VARCHAR(45) NOT NULL,
   `user_email` VARCHAR(45) NOT NULL,
   `user_avatar` VARCHAR(45) NOT NULL,
+  `role_id` INT NOT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE INDEX `user_id_UNIQUE` (`user_id` ASC)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-ALTER TABLE `user` 
-ADD COLUMN `role_id` INT NULL COMMENT '角色ID' AFTER `user_avatar`;
-
 
 # 文章表
   CREATE TABLE `article` (
@@ -102,6 +101,17 @@ CREATE TABLE `article_msg` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COMMENT = '文章评论表';
+CREATE TABLE `say` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `user_id` INT NOT NULL,
+  `time` BIGINT(64) NOT NULL,
+  `content` LONGTEXT NOT NULL,
+  `to_user_id` INT NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COMMENT = '说说';
 
 
 

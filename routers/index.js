@@ -226,6 +226,15 @@ router.post('/:action', function (req, res, next) {
                 }
             });
             break;
+        case /^addOneSay$/.test(action):
+            logic.addOneSay(reqBody, function (err, res) {
+                if (err == null) {
+                    retf(res);
+                } else {
+                    retf(err);
+                }
+            });
+            break;
         default:
             retf(iRet(CODE.ERROR_REQ_TYPE, MESSAGE.ERROR.ERROR_REQ_TYPE));
             break;
@@ -319,6 +328,15 @@ router.get('/:action', (req, res, next) => {
             break;
         case /^getRole$/.test(action):
             logic.getRole(reqBody, function (err, res) {
+                if (err == null) {
+                    retf(res);
+                } else {
+                    retf(err);
+                }
+            });
+            break;
+        case /^getSay$/.test(action):
+            logic.getSay(reqBody, function (err, res) {
                 if (err == null) {
                     retf(res);
                 } else {

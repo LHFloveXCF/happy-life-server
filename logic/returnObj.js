@@ -47,6 +47,9 @@ exports.MESSAGE = {
 		ARTICLE_MSG_LOOK: '文章留言查询成功',
 		ARTICLE_MSG_ADD: '文章留言增加成功',
 
+		SAY_ADD: '说说增加成功',
+		SAY_LOOK: '说说查询成功',
+
 		MSG_LOOK: '留言查询成功',
 		MSG_SAVE: '留言保存成功',
 		
