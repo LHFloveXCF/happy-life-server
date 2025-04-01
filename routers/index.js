@@ -235,6 +235,33 @@ router.post('/:action', function (req, res, next) {
                 }
             });
             break;
+            case /^addWrongQuestion$/.test(action):
+                logic.addWrongQuestion(reqBody, function (err, res) {
+                    if (err == null) {
+                        retf(res);
+                    } else {
+                        retf(err);
+                    }
+                });
+                break;
+            case /^updateWrongQuestionMastery$/.test(action):
+                logic.updateWrongQuestionMastery(reqBody, function (err, res) {
+                    if (err == null) {
+                        retf(res);
+                    } else {
+                        retf(err);
+                    }
+                });
+                break;
+            case /^deleteWrongQuestion$/.test(action):
+                logic.deleteWrongQuestion(reqBody, function (err, res) {
+                    if (err == null) {
+                        retf(res);
+                    } else {
+                        retf(err);
+                    }
+                });
+                break;
         default:
             retf(iRet(CODE.ERROR_REQ_TYPE, MESSAGE.ERROR.ERROR_REQ_TYPE));
             break;
@@ -337,6 +364,24 @@ router.get('/:action', (req, res, next) => {
             break;
         case /^getSay$/.test(action):
             logic.getSay(reqBody, function (err, res) {
+                if (err == null) {
+                    retf(res);
+                } else {
+                    retf(err);
+                }
+            });
+            break;
+        case /^getWrongQuestions$/.test(action):
+            logic.getWrongQuestions(reqBody, function (err, res) {
+                if (err == null) {
+                    retf(res);
+                } else {
+                    retf(err);
+                }
+            });
+            break;
+        case /^getWrongQuestionStats$/.test(action):
+            logic.getWrongQuestionStats(reqBody, function (err, res) {
                 if (err == null) {
                     retf(res);
                 } else {

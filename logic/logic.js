@@ -6,6 +6,8 @@ let mysqlC = require('../logic/logicMySQL'),
     MESSAGE = require('./returnObj').MESSAGE,
     iRET = common.iRET;
 
+const config = require('../config/serverConfig');
+
 /**
  * GM用户行为日志插入
  * @param {Object} reqBody
@@ -97,7 +99,7 @@ function saveFilePath(fileParams, callBack) {
     let sql = "INSERT INTO `file` (`file_md5`, `file_path`) VALUES (?, ?);";
     let params = [fileParams.fileMd5, fileParams.filePath];
     mysqlC.executeQuery(sql, params, (error, results) => {
-        
+
     });
 };
 
@@ -252,7 +254,7 @@ function addRole(reqBody, callBack) {
 };
 // 查询全部文章评论
 function getArticleMsg(reqBody, callBack) {
-    let sql = "SELECT * FROM article_msg where article_id = ?;";    
+    let sql = "SELECT * FROM article_msg where article_id = ?;";
     let params = [reqBody.articleId]
     mysqlC.executeQuery(sql, params, (error, results) => {
         if (error) {
@@ -280,7 +282,7 @@ function addOneArticleMsg(reqBody, callBack) {
 function addOneSay(reqBody, callBack) {
     console.log("variableName:", reqBody);
     let sql = "INSERT INTO `say` (`user_id`, `time`, `content`, `to_user_id`, `user_avatar`) VALUES (?, ?, ?, ?, ?);";
-    
+
     let time = new Date().getTime();
     let toUserId = 0;
     if (reqBody.toUserId) {
@@ -298,7 +300,7 @@ function addOneSay(reqBody, callBack) {
 };
 // 查询全部说说
 function getSay(reqBody, callBack) {
-    let sql = "select s.*, u.user_name from say s join user u on s.user_id = u.user_id;";    
+    let sql = "select s.*, u.user_name from say s join user u on s.user_id = u.user_id;";
     let params = []
     mysqlC.executeQuery(sql, params, (error, results) => {
         if (error) {
@@ -308,6 +310,133 @@ function getSay(reqBody, callBack) {
         };
     });
 };
+// 获取错题集
+function getWrongQuestions(reqBody, callback) {
+    let sql = `SELECT wq.*, s.name as subject_name 
+               FROM wrong_questions wq
+               JOIN subjects s ON wq.subject_id = s.id
+               WHERE wq.user_id = ?`;
+
+    // 支持按学科筛选
+    if (reqBody.subject_id) {
+        sql += ` AND wq.subject_id = ${reqBody.subject_id}`;
+    }
+
+    // 支持按掌握状态筛选
+    if (reqBody.is_mastered !== undefined) {
+        sql += ` AND wq.is_mastered = ${reqBody.is_mastered}`;
+    }
+
+    // 支持排序
+    const orderMap = {
+        'last_wrong_time': 'last_wrong_time DESC',
+        'wrong_count': 'wrong_count DESC',
+        'next_review': 'next_review_time ASC'
+    };
+    sql += ` ORDER BY ${orderMap[reqBody.order_by] || 'last_wrong_time DESC'}`;
+
+    mysqlC.executeQuery(sql, [reqBody.user_id], (error, results) => {
+        if (error) {
+            callback(iRET(CODE.ERROR_INTERNAL, error.stack), null);
+        } else {
+            callback(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.WRONG_QUESTIONS_QUERY, results));
+        }
+    });
+}
+
+// 添加错题
+function addWrongQuestion(reqBody, callback) {
+    const now = new Date();
+    const nextReviewTime = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000); // 默认3天后复习
+
+    const sql = `INSERT INTO wrong_questions SET ?`;
+    const params = {
+        user_id: reqBody.user_id,
+        question_id: reqBody.question_id,
+        subject_id: reqBody.subject_id,
+        question_type: reqBody.question_type,
+        question_content: reqBody.question_content,
+        correct_answer: reqBody.correct_answer,
+        user_answer: reqBody.user_answer,
+        wrong_reason: reqBody.wrong_reason,
+        wrong_detail: reqBody.wrong_detail,
+        first_wrong_time: now,
+        last_wrong_time: now,
+        next_review_time: nextReviewTime
+    };
+
+    mysqlC.executeQuery(sql, params, (error, results) => {
+        if (error) {
+            callback(iRET(CODE.ERROR_INTERNAL, error.stack), null);
+        } else {
+            callback(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.WRONG_QUESTION_ADD, { id: results.insertId }));
+        }
+    });
+}
+
+// 更新错题掌握状态
+function updateWrongQuestionMastery(reqBody, callback) {
+    const sql = `UPDATE wrong_questions 
+                SET is_mastered = ?, 
+                    next_review_time = ?
+                WHERE id = ? AND user_id = ?`;
+
+    // 如果标记为已掌握，则下次复习时间为30天后，否则为3天后
+    const nextReviewDays = reqBody.is_mastered ? 30 : 3;
+    const nextReviewTime = new Date(new Date().getTime() + nextReviewDays * 24 * 60 * 60 * 1000);
+
+    mysqlC.executeQuery(sql, [
+        reqBody.is_mastered,
+        nextReviewTime,
+        reqBody.id,
+        reqBody.user_id
+    ], (error, results) => {
+        if (error) {
+            callback(iRET(CODE.ERROR_INTERNAL, error.stack), null);
+        } else {
+            callback(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.WRONG_QUESTION_UPDATE));
+        }
+    });
+}
+
+// 删除错题
+function deleteWrongQuestion(reqBody, callback) {
+    const sql = `DELETE FROM wrong_questions WHERE id = ? AND user_id = ?`;
+
+    mysqlC.executeQuery(sql, [
+        reqBody.id,
+        reqBody.user_id
+    ], (error, results) => {
+        if (error) {
+            callback(iRET(CODE.ERROR_INTERNAL, error.stack), null);
+        } else {
+            callback(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.WRONG_QUESTION_DELETE));
+        }
+    });
+}
+
+// 获取错题统计信息
+function getWrongQuestionStats(reqBody, callback) {
+    const sql = `SELECT 
+                COUNT(*) as total,
+                SUM(is_mastered = 0) as unmastered,
+                SUM(is_mastered = 1) as mastered,
+                subject_id,
+                s.name as subject_name
+                FROM wrong_questions wq
+                JOIN subjects s ON wq.subject_id = s.id
+                WHERE wq.user_id = ?
+                GROUP BY subject_id`;
+
+    mysqlC.executeQuery(sql, [reqBody.user_id], (error, results) => {
+        if (error) {
+            callback(iRET(CODE.ERROR_INTERNAL, error.stack), null);
+        } else {
+            callback(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.WRONG_QUESTIONS_STATS, results));
+        }
+    });
+}
+
 exports.getSay = getSay;
 exports.addOneArticleMsg = addOneArticleMsg;
 exports.addOneSay = addOneSay;
@@ -321,11 +450,37 @@ exports.deleteUser = deleteUser;
 exports.userRigster = userRigster;
 exports.deleteImage = deleteImage;
 exports.getImages = getImages;
-exports.deleteArticle = deleteArticle;
-exports.saveFilePath = saveFilePath;
-exports.loginBack = loginBack;
-exports.saveArticle = saveArticle;
-exports.getArticle = getArticle;
-exports.getMsg = getMsg;
-exports.saveMsg = saveMsg;
-exports.logInsert = logInsert;
+exports.getWrongQuestions = getWrongQuestions;
+exports.addWrongQuestion = addWrongQuestion;
+exports.getWrongQuestions = getWrongQuestions;
+exports.updateWrongQuestionMastery = updateWrongQuestionMastery;
+exports.addWrongQuestion = addWrongQuestion;
+exports.getWrongQuestions = getWrongQuestions;
+
+function testMySQLConnection(callback) {
+    console.log('正在使用MySQL配置:', {
+        host: config.MYSQL_CONF.HOST,
+        user: config.MYSQL_CONF.USER,
+        database: config.MYSQL_CONF.DB,
+        password: config.MYSQL_CONF.PASS
+    });
+
+    const sql = "SELECT 1 AS test";
+    mysqlC.executeQuery(sql, [], (error, results) => {
+        if (error) {
+            console.error('MySQL连接测试失败:', error);
+            callback(false);
+        } else {
+            console.log('MySQL连接测试成功:', results);
+            callback(true);
+        }
+    });
+}
+
+// 在应用启动时调用
+testMySQLConnection((success) => {
+    if (!success) {
+        console.error('无法连接到MySQL数据库，请检查配置');
+        // 可以在这里退出应用或采取其他措施
+    }
+});

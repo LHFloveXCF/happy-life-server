@@ -1,31 +1,14 @@
 const mysql = require('mysql2');
-const dbConfig = require('../config/config').MYSQL_CONF;
+const dbConfig = require('../config/serverConfig');
 
-// create the connection to database
-const connection = mysql.createConnection({
-  'host': dbConfig.HOST,
-			'port': dbConfig.PORT,
-			'user': dbConfig.USER,
-			'password': dbConfig.PASS,
-			'database': dbConfig.DB,
-			"stringifyObjects": true,
-			"multipleStatements": true
-});
-
+// 修改为正确访问 MYSQL_CONF 配置
 const pool = mysql.createPool({
-	host: dbConfig.HOST,
-	user: dbConfig.USER,
-	database: dbConfig.DB,
-	password: dbConfig.PASS,
-	waitForConnections: true,
-	connectionLimit: 10,
-	maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-	idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-	queueLimit: 0,
-	enableKeepAlive: true,
-	keepAliveInitialDelay: 0,
-	connectTimeout: 10000 // 10 seconds
-  });
+    host: dbConfig.MYSQL_CONF.HOST,
+    port: dbConfig.MYSQL_CONF.PORT,
+    user: dbConfig.MYSQL_CONF.USER,
+    password: dbConfig.MYSQL_CONF.PASS,
+    database: dbConfig.MYSQL_CONF.DB,
+});
 
 
 function executeQuery(sql, params, callback) {

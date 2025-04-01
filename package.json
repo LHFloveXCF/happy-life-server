@@ -1,4 +1,5 @@
 {
+    "type": "commonjs",
     "name": "HappyLifeServer",
     "version": "1.0.0",
     "description": "Simple is the best.",
@@ -16,6 +17,7 @@
         "mysql2": "^3.11.4"
     },
     "scripts": {
-        "start": "node ./bin/happyLifeServer"
+        "dev": "set NODE_ENV=dev&& node ./bin/happyLifeServer",
+        "start": "set NODE_ENV=release&& node ./bin/happyLifeServer"
     }
 }
