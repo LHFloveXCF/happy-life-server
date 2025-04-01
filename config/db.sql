@@ -157,3 +157,7 @@ CREATE TABLE `subjects` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='学科分类表';
 
+INSERT INTO `lucky_momo`.`role` (`id`, `role_id`, `role_name`, `role_desc`) VALUES ('1', '1', '管理员', '管理员');
+INSERT INTO `lucky_momo`.`user` (`user_id`, `user_name`, `pass_word`, `user_email`, `user_avatar`, `role_id`) VALUES ('1', '1', '1', '1', '1', '1');
+INSERT INTO `lucky_momo`.`permissions` (`permission_id`, `permission_name`, `permission_desc`) VALUES ('1', 'admin', 'admin');
+INSERT INTO `lucky_momo`.`role_permission` (`role_id`, `permission_id`) VALUES ('1', '1');

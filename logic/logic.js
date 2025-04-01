@@ -124,6 +124,7 @@ function loginBack(reqBody, callBack) {
             callBack(iRET(CODE.ERROR_INTERNAL, error.stack), null);
         } else {
             if (results.length === 0) {
+                console.log("result:" + results)
                 // 没有查询到数据
                 callBack(null, iRET(CODE.SUCCESS, MESSAGE.SUCCESS.LOGIN_CHECKED_FAIL, results));
             } else {
@@ -437,6 +438,14 @@ function getWrongQuestionStats(reqBody, callback) {
     });
 }
 
+exports.deleteArticle = deleteArticle;
+exports.saveFilePath = saveFilePath;
+exports.loginBack = loginBack;
+exports.saveArticle = saveArticle;
+exports.getArticle = getArticle;
+exports.getMsg = getMsg;
+exports.saveMsg = saveMsg;
+exports.logInsert = logInsert;
 exports.getSay = getSay;
 exports.addOneArticleMsg = addOneArticleMsg;
 exports.addOneSay = addOneSay;
